@@ -1,0 +1,59 @@
+---
+interface Article {
+  id: string;
+  slug: string;
+  body: string;
+  collection: string;
+  data: {
+    author: string;
+    categories: string;
+    title: string;
+    image: string;
+    date: string;
+    featured: boolean;
+  };
+}
+
+import { getEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import Main from "../../components/Main.astro";
+import { Image } from "astro:assets";
+
+const { slug } = Astro.params;
+const post = await getEntry("posts", slug as string);
+---
+
+<Layout title="Welcome to Astro Blog">
+  <Main>
+    {post ? (
+      <article>
+        <a
+          href={`/blog/${post.slug}`}
+          aria-label={`Read more about ${post.data.title}`}
+        >
+          <Image
+            src={post.data.image}
+            alt={post.data.title}
+            width={600}
+            height={400} 
+            format="webp"
+            class="rounded-2xl shadow-xl mb-6 aspect-thumbnail object-cover"
+          />
+        </a>
+        <a
+          href={`/blog/${post.slug}`}
+          class="text-4xl text-zinc-900 mb-4 font-semibold inline-block"
+        >
+          {post.data.title}
+        </a>
+        <p class="text-zinc-500 text-2xl mb-9 line-clamp-2">{post.body}</p>
+      </article>
+
+      <article class="prose lg:prose-xl">
+        <p>{post.body}</p>
+      </article>
+    ) : (
+      <p>Loading...</p>
+    )}
+  </Main>
+</Layout>
